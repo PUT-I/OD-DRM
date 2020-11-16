@@ -15,7 +15,6 @@ def make_key(seed: int) -> str:
 
     hex_format = '{0:0{1}x}'
     hex_seed = hex_format.format(seed % int('ffffffff', 16), 8)
-    print(type(hex_seed))
 
     kb0 = hex_format.format(get_key_byte(int(hex_seed, 16), 9871654, 98713654, 98713657), 2)
     kb1 = hex_format.format(get_key_byte(int(hex_seed, 16), 189364, 153499, 98172563), 2)
