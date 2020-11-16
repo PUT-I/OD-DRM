@@ -1,14 +1,32 @@
-def get_key_byte(seed, a, b, c):
+""" TODO: Finish docstring """
+
+
+def get_key_byte(seed: int, a: int, b: int, c: int) -> int:
+    """ TODO: Finish docstring
+
+    :param seed:
+    :param a:
+    :param b:
+    :param c:
+    :return:
+    """
+
     a %= 25
     b %= 3
     if a % 2 == 0:
-        keybyte = ((seed >> a) & 255) ^ ((seed >> b) | c)
+        key_byte = ((seed >> a) & 255) ^ ((seed >> b) | c)
     else:
-        keybyte = ((seed >> a) & 255) ^ ((seed >> b) & c)
-    return keybyte % 255
+        key_byte = ((seed >> a) & 255) ^ ((seed >> b) & c)
+    return key_byte % 255
 
 
-def get_checksum(s):
+def get_checksum(s: str) -> int:
+    """ TODO: Finish docstring
+
+    :param s:
+    :return:
+    """
+
     left = 86
     right = 175
     if len(s) > 0:
@@ -20,4 +38,5 @@ def get_checksum(s):
             if left > 255:
                 left -= 255
     checksum = (left << 8) + right
+
     return checksum
