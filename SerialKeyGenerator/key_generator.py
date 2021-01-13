@@ -2,28 +2,33 @@
 import os
 import random
 import sys
+import string
 
 from key_utils import get_key_byte, get_checksum
 
 
-def make_key(seed: int) -> str:
+def seed_generator(size=11, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.SystemRandom().choice(chars) for _ in range(size))
+
+
+def make_key(seed: str) -> str:
     """ TODO: Finish docstring
 
     :param seed:
     :return:
     """
-
-    hex_format = '{0:0{1}x}'
-    hex_seed = hex_format.format(seed % int('ffffffff', 16), 8)
-
-    kb0 = hex_format.format(get_key_byte(int(hex_seed, 16), 9871654, 98713654, 98713657), 2)
-    kb1 = hex_format.format(get_key_byte(int(hex_seed, 16), 189364, 153499, 98172563), 2)
-    kb2 = hex_format.format(get_key_byte(int(hex_seed, 16), 9861523849, 8761534, 67514985), 2)
-    kb3 = hex_format.format(get_key_byte(int(hex_seed, 16), 786153786615, 91876458615, 81359712), 2)
-
-    checksum = hex_format.format(get_checksum(hex_seed + kb0 + kb1 + kb2 + kb3), 4)
-    key = f"{hex_seed[0:4]}-{hex_seed[4:8]}-{kb0}{kb1}-{kb2}{kb3}-{checksum}"
-
+    # C01SS-SC12S-SS23S-S34SC-40SSC
+    kb0 = get_key_byte(seed, 9871654, 98713654, 98713657)
+    kb1 = get_key_byte(seed, 189364, 153499, 98172563)
+    kb2 = get_key_byte(seed, 9861523849, 8761534, 67514985)
+    kb3 = get_key_byte(seed, 786153786615, 91876458615, 81359712)
+    kb4 = get_key_byte(seed, 987145, 6487961023, 581640)
+    checksum = get_checksum(seed + kb0 + kb1 + kb2 + kb3 + kb4)
+    key = f"{checksum[0:1]}{kb0[:1]}{kb1[:1]}{seed[0:2]}"
+    key += f"-{seed[2:3]}{checksum[1:2]}{kb1[1:]}{kb2[:1]}{seed[3:4]}"
+    key += f"-{seed[4:6]}{kb2[1:]}{kb3[:1]}{seed[6:7]}"
+    key += f"-{seed[7:8]}{kb3[1:]}{kb4[:1]}{seed[8:9]}{checksum[2:3]}"
+    key += f"-{kb4[1:]}{kb0[:1]}{seed[9:11]}{checksum[3:4]}"
     return key
 
 
@@ -50,10 +55,10 @@ def _main() -> None:
     sys.stdout = open("valid_keys.txt", "w")
     while generated < keys:
         already_used = False
-        rand: int = random.randrange(int('ffffffff', 16))
+        seed = seed_generator()
 
         for b in burned_seeds:
-            if int(b, 16) == rand:
+            if b == seed:
                 already_used = True
                 break
 
@@ -61,15 +66,15 @@ def _main() -> None:
             continue
 
         for u in used_seeds:
-            if int(u, 16) == rand:
+            if u == seed:
                 already_used = True
                 break
 
         if already_used:
             continue
 
-        print(make_key(rand))
-        used_seeds.append('{0:0{1}x}'.format(rand, 8))
+        print(make_key(seed))
+        used_seeds.append(seed)
         generated += 1
     sys.stdout = original_stdout
 

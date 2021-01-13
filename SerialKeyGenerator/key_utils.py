@@ -43,7 +43,7 @@ def get_key_byte(seed_str: str, a: int, b: int, c: int) -> str:
     :param c:
     :return:
     """
-    seed = str_to_int(seed_str) << a
+    seed = str_to_int(seed_str) << a % 8615323
     seed += a
     pow_ = math.pow(seed % 78651, b % 55)
     sqrt_ = math.sqrt(pow_)
