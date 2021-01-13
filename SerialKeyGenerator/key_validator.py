@@ -61,10 +61,6 @@ def check_key(key: str) -> Key:
     return Key.GOOD
 
 
-def _main() -> None:
+if __name__ == '__main__':
     x = input('Key to validate: ')
     print(check_key(x))
-
-
-if __name__ == '__main__':
-    _main()

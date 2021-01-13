@@ -30,7 +30,7 @@ def make_key(seed: str) -> str:
     return key
 
 
-def _main() -> None:
+if __name__ == '__main__':
     nb = input('Keys to generate: ')
     keys = int(nb)
     generated = 0
@@ -48,21 +48,21 @@ def _main() -> None:
     sys.stdout = open("valid_keys.txt", "w")
     while generated < keys:
         already_used = False
-        seed = seed_generator()
+        random_seed = seed_generator()
         for b in burned_seeds:
-            if b == seed:
+            if b == random_seed:
                 already_used = True
                 break
         if already_used:
             continue
         for u in used_seeds:
-            if u == seed:
+            if u == random_seed:
                 already_used = True
                 break
         if already_used:
             continue
-        print(make_key(seed))
-        used_seeds.append(seed)
+        print(make_key(random_seed))
+        used_seeds.append(random_seed)
         generated += 1
     sys.stdout = original_stdout
     print('Printing seeds...')
@@ -71,7 +71,3 @@ def _main() -> None:
         print(u)
     sys.stdout = original_stdout
     print('Done!')
-
-
-if __name__ == '__main__':
-    _main()
