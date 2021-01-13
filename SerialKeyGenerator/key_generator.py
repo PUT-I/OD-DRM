@@ -1,4 +1,3 @@
-""" TODO: Finish docstring """
 import os
 import random
 import sys
@@ -12,32 +11,26 @@ def seed_generator(size=11, chars=string.ascii_uppercase + string.digits):
 
 
 def make_key(seed: str) -> str:
-    """ TODO: Finish docstring
-
-    :param seed:
-    :return:
-    """
-    # C01SS-SC12S-SS23S-S34SC-40SSC
-    # S - seed
-    # 0,1,2,3,4 - keys
-    # C - checksum
     kb0 = get_key_byte(seed, 9871654, 98713654, 98713657)
     kb1 = get_key_byte(seed, 189364, 153499, 98172563)
     kb2 = get_key_byte(seed, 9861523849, 8761534, 67514985)
     kb3 = get_key_byte(seed, 786153786615, 91876458615, 81359712)
     kb4 = get_key_byte(seed, 987145, 6487961023, 581640)
-    checksum = get_checksum(seed + kb0 + kb1 + kb2 + kb3 + kb4)
+    incomplete = f"{kb0[:1]}{kb1[:1]}{seed[0:2]}"
+    incomplete += f"{seed[2:3]}{kb1[1:]}{kb2[:1]}{seed[3:4]}"
+    incomplete += f"{seed[4:6]}{kb2[1:]}{kb3[:1]}{seed[6:7]}"
+    incomplete += f"{seed[7:8]}{kb3[1:]}{kb4[:1]}{seed[8:9]}"
+    incomplete += f"{kb4[1:]}{kb0[1:]}{seed[9:11]}"
+    checksum = get_checksum(incomplete)
     key = f"{checksum[0:1]}{kb0[:1]}{kb1[:1]}{seed[0:2]}"
     key += f"-{seed[2:3]}{checksum[1:2]}{kb1[1:]}{kb2[:1]}{seed[3:4]}"
     key += f"-{seed[4:6]}{kb2[1:]}{kb3[:1]}{seed[6:7]}"
     key += f"-{seed[7:8]}{kb3[1:]}{kb4[:1]}{seed[8:9]}{checksum[2:3]}"
-    key += f"-{kb4[1:]}{kb0[:1]}{seed[9:11]}{checksum[3:4]}"
+    key += f"-{kb4[1:]}{kb0[1:]}{seed[9:11]}{checksum[3:4]}"
     return key
 
 
 def _main() -> None:
-    """ Main function """
-
     nb = input('Keys to generate: ')
 
     keys = int(nb)
