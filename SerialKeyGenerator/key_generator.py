@@ -32,13 +32,11 @@ def make_key(seed: str) -> str:
 
 def _main() -> None:
     nb = input('Keys to generate: ')
-
     keys = int(nb)
     generated = 0
     burned_seeds = []
     used_seeds = []
     original_stdout = sys.stdout
-
     if os.path.exists('used_seeds.txt'):
         print('Loading used seeds...')
         with open('used_seeds.txt', 'r') as ur:
@@ -46,40 +44,32 @@ def _main() -> None:
             for line in lines:
                 burned_seeds.append(line[:-1])
             ur.close()
-
     print('Printing keys...')
     sys.stdout = open("valid_keys.txt", "w")
     while generated < keys:
         already_used = False
         seed = seed_generator()
-
         for b in burned_seeds:
             if b == seed:
                 already_used = True
                 break
-
         if already_used:
             continue
-
         for u in used_seeds:
             if u == seed:
                 already_used = True
                 break
-
         if already_used:
             continue
-
         print(make_key(seed))
         used_seeds.append(seed)
         generated += 1
     sys.stdout = original_stdout
-
     print('Printing seeds...')
     sys.stdout = open("used_seeds.txt", "a")
     for u in used_seeds:
         print(u)
     sys.stdout = original_stdout
-
     print('Done!')
 
 
