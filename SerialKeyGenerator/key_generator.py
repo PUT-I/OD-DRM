@@ -18,6 +18,9 @@ def make_key(seed: str) -> str:
     :return:
     """
     # C01SS-SC12S-SS23S-S34SC-40SSC
+    # S - seed
+    # 0,1,2,3,4 - keys
+    # C - checksum
     kb0 = get_key_byte(seed, 9871654, 98713654, 98713657)
     kb1 = get_key_byte(seed, 189364, 153499, 98172563)
     kb2 = get_key_byte(seed, 9861523849, 8761534, 67514985)

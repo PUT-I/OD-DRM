@@ -18,7 +18,7 @@ def str_to_int(input_str: str) -> int:
     return int.from_bytes(input_bytes, byteorder="big", signed=False)
 
 
-def int_to_str(input_int: int, length: int = 100) -> str:
+def int_to_str(input_int: int, length=100) -> str:
     """
 
     :param input_int:
@@ -28,7 +28,7 @@ def int_to_str(input_int: int, length: int = 100) -> str:
     output_bytes = input_int.to_bytes(length, byteorder="big", signed=False)
     result = []
     for byte in output_bytes:
-        if byte == 0x00:
+        if byte % len(characters) == 0x00:
             continue
         result.append(characters[byte % len(characters)])
     return "".join(result)
