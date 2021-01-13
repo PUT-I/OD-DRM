@@ -1,5 +1,8 @@
+import os
+import random
+import sys
+
 from key_utils import get_key_byte, get_checksum
-import sys, random, os
 
 
 def make_key(seed):
