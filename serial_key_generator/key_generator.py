@@ -9,7 +9,7 @@ def seed_generator(size=11, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.SystemRandom().choice(chars) for _ in range(size))
 
 
-def make_key(seed: str) -> str:
+def generate_key(seed: str) -> str:
     kb0 = get_key_byte(seed, 9871654, 98713654, 98713657)
     kb1 = get_key_byte(seed, 189364, 153499, 98172563)
     kb2 = get_key_byte(seed, 9861523849, 8761534, 67514985)
@@ -65,7 +65,7 @@ def _main():
             if already_used:
                 continue
 
-            key = make_key(random_seed)
+            key = generate_key(random_seed)
             valid_keys_file.write(key + "\n")
             used_seeds.append(random_seed)
             generated += 1
