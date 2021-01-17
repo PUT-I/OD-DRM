@@ -134,7 +134,7 @@ def get_best_hand_example():
             PokerCard(CardRank.two, CardSuit.hearts), PokerCard(CardRank.three, CardSuit.hearts),
             PokerCard(CardRank.four, CardSuit.hearts)]
     deck = [PokerCard(CardRank.five, CardSuit.spades), PokerCard(CardRank.six, CardSuit.diamonds)]
-    # print(Checker.get_best_hand(hand, deck))
+    print(Checker.get_best_hand(hand, deck))
 
 
 def check_hand_examples():
