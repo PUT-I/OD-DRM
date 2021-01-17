@@ -4,7 +4,7 @@ from typing import List
 
 import cv2
 import numpy as np
-from gui.pokevisor_status_ui import PokeVisorStatusUi
+from poke_visor.gui.pokevisor_status_ui import PokeVisorStatusUi
 
 from poke_visor.classes.player import Player
 from poke_visor.classes.poker_card import PokerCard
