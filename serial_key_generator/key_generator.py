@@ -1,7 +1,6 @@
 import os
 import random
 import string
-import sys
 
 from serial_key_generator.key_utils import get_key_byte, get_checksum
 
@@ -34,50 +33,48 @@ def make_key(seed: str) -> str:
 
 
 def _main():
-    nb = input('Keys to generate: ')
+    nb = input('Number of keys to generate: ')
     keys = int(nb)
     generated = 0
     burned_seeds = []
     used_seeds = []
-    original_stdout = sys.stdout
 
     if os.path.exists('used_seeds.txt'):
         print('Loading used seeds...')
-        with open('used_seeds.txt', 'r') as ur:
-            lines = ur.readlines()
+        with open('used_seeds.txt', 'r') as used_seeds_file:
+            lines = used_seeds_file.readlines()
             for line in lines:
                 burned_seeds.append(line[:-1])
-            ur.close()
+            used_seeds_file.close()
     print('Printing keys...')
-    sys.stdout = open("valid_keys.txt", "w")
 
-    while generated < keys:
-        already_used = False
-        random_seed = seed_generator()
-        for b in burned_seeds:
-            if b == random_seed:
-                already_used = True
-                break
-        if already_used:
-            continue
-        for u in used_seeds:
-            if u == random_seed:
-                already_used = True
-                break
-        if already_used:
-            continue
-        print(make_key(random_seed))
-        used_seeds.append(random_seed)
-        generated += 1
+    with open('valid_keys.txt', 'w') as valid_keys_file, open("used_seeds.txt", "a") as used_seeds_file:
+        while generated < keys:
+            already_used = False
+            random_seed = seed_generator()
+            for b in burned_seeds:
+                if b == random_seed:
+                    already_used = True
+                    break
+            if already_used:
+                continue
+            for seed in used_seeds:
+                if seed == random_seed:
+                    already_used = True
+                    break
+            if already_used:
+                continue
 
-    sys.stdout = original_stdout
-    print('Printing seeds...')
-    sys.stdout = open("used_seeds.txt", "a")
+            key = make_key(random_seed)
+            valid_keys_file.write(key + "\n")
+            used_seeds.append(random_seed)
+            generated += 1
 
-    for u in used_seeds:
-        print(u)
-    sys.stdout = original_stdout
-    print('Done!')
+        print('Printing seeds...')
+
+        for seed in used_seeds:
+            used_seeds_file.write(seed + "\n")
+        print('Done!')
 
 
 if __name__ == '__main__':
