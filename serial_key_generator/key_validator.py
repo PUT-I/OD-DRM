@@ -31,7 +31,7 @@ def check_key_checksum(key: str) -> bool:
 
 
 def check_key(key: str) -> Key:
-    key = key.upper()
+    key = key.upper().strip()
 
     if not check_key_checksum(key):
         return Key.INVALID
