@@ -3,7 +3,7 @@ import random
 import string
 import sys
 
-from key_utils import get_key_byte, get_checksum
+from serial_key_generator.key_utils import get_key_byte, get_checksum
 
 
 def seed_generator(size=11, chars=string.ascii_uppercase + string.digits):

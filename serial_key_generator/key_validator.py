@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from key_utils import get_checksum, get_key_byte
+from serial_key_generator.key_utils import get_checksum, get_key_byte
 
 KEY00 = 1
 KEY01 = 1
