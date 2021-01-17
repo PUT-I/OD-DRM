@@ -67,6 +67,10 @@ def load_ranks(filepath):
         last = len(train_ranks) - 1
         train_ranks[last].rank = rank
         filename = str(rank.name) + ".jpg"
+
+        if not os.path.exists(filepath + filename):
+            raise RuntimeError(f"Card rank file not found : {filepath + filename}")
+
         train_ranks[last].img = cv2.imread(filepath + filename, cv2.IMREAD_GRAYSCALE)
 
     return train_ranks
@@ -86,6 +90,10 @@ def load_suits(filepath):
         last = len(train_suits) - 1
         train_suits[last].suit = suit
         filename = str(suit.name) + ".jpg"
+
+        if not os.path.exists(filepath + filename):
+            raise RuntimeError(f"Card suit file not found : {filepath + filename}")
+
         train_suits[last].img = cv2.imread(filepath + filename, cv2.IMREAD_GRAYSCALE)
 
     return train_suits
