@@ -106,6 +106,9 @@ def _main() -> None:
         winreg.CloseKey(key)
         if KeyValidator.check_key(key_from_registry) == KeyStatus.VALID:
             MainMenuUi().mainloop()
+        else:
+            key_activation = KeyValidationUi()
+            key_activation.mainloop()
 
 
     except:
