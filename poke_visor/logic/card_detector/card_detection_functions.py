@@ -116,7 +116,7 @@ def find_cards(thresh_image):
 
     # Find contours and sort their indices by contour size
     cnts, hier = cv2.findContours(thresh_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    index_sort = sorted(range(len(cnts)), key=lambda i: cv2.contourArea(cnts[i]), reverse=True)
+    index_sort = sorted(range(len(cnts)), key=lambda i_: cv2.contourArea(cnts[i_]), reverse=True)
 
     # If there are no contours, do nothing
     if len(cnts) == 0:

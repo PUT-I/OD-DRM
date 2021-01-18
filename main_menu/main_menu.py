@@ -6,7 +6,7 @@ from tkinter import Tk, messagebox, StringVar
 from poke_visor.gui.chip_classifier_generator_ui import main as chip_main
 from poke_visor.gui.pokevisor_image_ui import main as image_main
 from poke_visor.gui.pokevisor_video_ui import main as video_main
-from serial_key_generator import key_validator as kv
+from serial_key_generator.key_validator import KeyValidator, KeyStatus
 
 
 class KeyValidationUi(Tk):
@@ -33,7 +33,7 @@ class KeyValidationUi(Tk):
     def validate(self) -> None:
         """ Handles user entered key validation. """
 
-        if kv.check_key(self._key.get()) == kv.Key.GOOD:
+        if KeyValidator.check_key(self._key.get()) == KeyStatus.VALID:
             self.destroy()
             MainMenuUi()
         else:

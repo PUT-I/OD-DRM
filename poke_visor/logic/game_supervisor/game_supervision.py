@@ -4,10 +4,10 @@ from typing import List
 
 import cv2
 import numpy as np
-from poke_visor.gui.pokevisor_status_ui import PokeVisorStatusUi
 
 from poke_visor.classes.player import Player
 from poke_visor.classes.poker_card import PokerCard
+from poke_visor.gui.pokevisor_status_ui import PokeVisorStatusUi
 from poke_visor.logic.card_detector import card_detection
 from poke_visor.logic.chip_detector import chip_detection
 from poke_visor.logic.game_supervisor import game_image_processing
@@ -67,14 +67,14 @@ def supervise_video(cap, players: int = 2) -> None:
 
 def supervise_images(images: list, players: int = 2):
     status_ui = PokeVisorStatusUi(players=players)
-    for image in images:
-        community_cards, player_cards_list, community_chips, player_chips_list = supervise(image, dst=image)
-        image = game_image_processing.put_overlay_on_image(image)
+    for image_ in images:
+        community_cards, player_cards_list, community_chips, player_chips_list = supervise(image_, dst=image_)
+        image_ = game_image_processing.put_overlay_on_image(image_)
 
         player_list = _create_player_list(player_cards_list, player_chips_list, community_cards)
         status_ui.write_turn(community_cards, player_list)
 
-        cv2.imshow("PokeVisor", image)
+        cv2.imshow("PokeVisor", image_)
         cv2.waitKey()
 
     cv2.destroyAllWindows()

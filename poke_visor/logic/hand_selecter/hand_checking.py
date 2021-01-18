@@ -137,6 +137,7 @@ def get_best_hand_example():
     print(Checker.get_best_hand(hand, deck))
 
 
+# noinspection PyProtectedMember
 def check_hand_examples():
     card_1 = PokerCard(CardRank.ace, CardSuit.hearts)
     card_2 = PokerCard(CardRank.king, CardSuit.spades)

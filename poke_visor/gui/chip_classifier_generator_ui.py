@@ -51,14 +51,12 @@ class ChipClassifierGeneratorUi(Tk):
                             "Classifier has been trained and saved to: {}.".format(output_filename))
         except FileNotFoundError:
             tk_msg.showerror("Samples not found", "Samples not found in: {}.".format(sample_images_path))
-     
 
 
 def main():
     classifier_generator = ChipClassifierGeneratorUi()
     classifier_generator.mainloop()
 
-if __name__ == "__main__":
-    classifier_generator = ChipClassifierGeneratorUi()
-    classifier_generator.mainloop()
 
+if __name__ == "__main__":
+    main()
