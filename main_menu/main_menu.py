@@ -1,7 +1,9 @@
 """ This script contains key validation and main menu ui classes. """
 
 import tkinter.ttk as ttk
+import winreg
 from tkinter import Tk, messagebox, StringVar
+from winreg import  KEY_ALL_ACCESS
 
 from poke_visor.gui.chip_classifier_generator_ui import main as chip_main
 from poke_visor.gui.pokevisor_image_ui import main as image_main
@@ -32,9 +34,14 @@ class KeyValidationUi(Tk):
 
     def _validate(self) -> None:
         """ Handles user entered key validation. """
-
-        if KeyValidator.check_key(self._key.get()) == KeyStatus.VALID:
+        key_written=self._key.get()
+        if KeyValidator.check_key(key_written) == KeyStatus.VALID:
             self.destroy()
+            access_registry = winreg.ConnectRegistry(None,winreg.HKEY_CURRENT_USER)
+            access_key = winreg.OpenKey(access_registry,r"SOFTWARE")
+            key=winreg.CreateKey(access_registry,"SOFTWARE\Pokevisor")
+            winreg.SetValueEx(key, "key", 0, winreg.REG_SZ,key_written)
+            winreg.CloseKey(key)
             MainMenuUi()
         else:
             messagebox.showinfo("error", "Wrong key")
@@ -90,9 +97,20 @@ class MainMenuUi(Tk):
 
 def _main() -> None:
     """ Main function """
+    access_registry = winreg.ConnectRegistry(None,winreg.HKEY_CURRENT_USER)
+    try:
+        #checks for key in registry
+       
+        key = winreg.OpenKey(access_registry, r"SOFTWARE\Pokevisor")
+        key_from_registry=winreg.QueryValueEx(key, "key")[0]
+        winreg.CloseKey(key)
+        if KeyValidator.check_key(key_from_registry) == KeyStatus.VALID:
+            MainMenuUi().mainloop()
 
-    key_activation = KeyValidationUi()
-    key_activation.mainloop()
+
+    except:
+        key_activation = KeyValidationUi()
+        key_activation.mainloop()
 
 
 if __name__ == "__main__":
