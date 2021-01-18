@@ -28,9 +28,9 @@ class KeyValidationUi(Tk):
         ttk.Entry(key_entry_frame, width=40, textvariable=self._key).pack(padx=5, pady=5)
         key_entry_frame.pack(padx=5, pady=5)
 
-        ttk.Button(self, text="Register", width=10, command=self.validate).pack()
+        ttk.Button(self, text="Register", width=10, command=self._validate).pack()
 
-    def validate(self) -> None:
+    def _validate(self) -> None:
         """ Handles user entered key validation. """
 
         if KeyValidator.check_key(self._key.get()) == KeyStatus.VALID:
