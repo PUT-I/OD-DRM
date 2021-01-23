@@ -14,16 +14,6 @@ export default {
         console.log("Getting all users");
         return axios.get(baseUrl, config);
     },
-    getUser(id) {
-        console.log("Getting user");
-        const url = `${baseUrl}/${id}`;
-        return axios.get(url, config);
-    },
-    getUserAuthorization(id) {
-        console.log("Getting user authorization");
-        const url = `${baseUrl}/${id}/authorized`;
-        return axios.get(url, config);
-    },
     addUser(user) {
         console.log("Saving user");
         console.log(user);

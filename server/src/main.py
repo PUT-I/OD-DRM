@@ -28,12 +28,16 @@ def test():
     return "ok"
 
 
-@app.route('/user/<user_id>/authorized', methods=["POST"])
+@app.route('/user/authorize', methods=["POST"])
 @cross_origin()
-def authorize(user_id: int):
+def authorize():
+    request_json = request.json
+    user_id = request_json["userId"]
+    password = request_json["password"]
+
     session = Session()
     user: orm.User = session.query(orm.User) \
-        .filter(orm.User.id_user == user_id) \
+        .filter(orm.User.id_user == user_id and orm.User.password == password) \
         .first()
 
     if user is None:
