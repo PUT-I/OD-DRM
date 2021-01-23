@@ -2,6 +2,7 @@ import json
 from typing import List
 
 from flask import Flask, request, Response
+from flask_cors import cross_origin
 from sqlalchemy import create_engine
 # noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
@@ -21,12 +22,14 @@ app = Flask("PokeVisorAuthorization")
 
 @app.route('/')
 @app.route('/test')
+@cross_origin()
 def test():
     Log.i("Received test request")
     return "ok"
 
 
 @app.route('/user/<user_id>/authorized', methods=["POST"])
+@cross_origin()
 def authorize(user_id: int):
     session = Session()
     user: orm.User = session.query(orm.User) \
@@ -42,6 +45,7 @@ def authorize(user_id: int):
 
 
 @app.route('/user', methods=["GET"])
+@cross_origin()
 def get_all_users():
     session = Session()
     try:
@@ -52,7 +56,6 @@ def get_all_users():
             response.append({
                 "userId": user.id_user,
                 "username": user.username,
-                "password": user.password,
                 "authorized": user.authorized
             })
     except:
@@ -66,6 +69,7 @@ def get_all_users():
 
 
 @app.route('/user/<user_id>', methods=["GET"])
+@cross_origin()
 def get_user(user_id: int):
     session = Session()
     user: orm.User = session.query(orm.User) \
@@ -78,7 +82,6 @@ def get_user(user_id: int):
     response = {
         "userId": user.id_user,
         "username": user.username,
-        "password": user.password,
         "authorized": user.authorized
     }
     session.close()
@@ -89,6 +92,7 @@ def get_user(user_id: int):
 
 
 @app.route('/user', methods=["POST"])
+@cross_origin()
 def add_user():
     session = Session()
     try:
@@ -102,7 +106,6 @@ def add_user():
         response = {
             "userId": user.id_user,
             "username": user.username,
-            "password": user.password,
             "authorized": user.authorized
         }
 
@@ -117,6 +120,7 @@ def add_user():
 
 
 @app.route('/user/<user_id>', methods=["PUT"])
+@cross_origin()
 def update_user(user_id: int):
     session = Session()
     user: orm.User = session.query(orm.User) \
@@ -127,14 +131,15 @@ def update_user(user_id: int):
         return "", 404
 
     request_json = request.json
-    user.password = request_json["password"]
-    user.authorized = request_json["authorized"]
+    if "password" in request_json and request_json["password"]:
+        user.password = request_json["password"]
+    if "authorized" in request_json:
+        user.authorized = request_json["authorized"]
     session.commit()
 
     response = {
         "userId": user.id_user,
         "username": user.username,
-        "password": user.password,
         "authorized": user.authorized
     }
     session.close()
@@ -145,6 +150,7 @@ def update_user(user_id: int):
 
 
 @app.route('/user/<user_id>', methods=["DELETE"])
+@cross_origin()
 def delete_user(user_id: int):
     session = Session()
     user: orm.User = session.query(orm.User) \
@@ -154,7 +160,11 @@ def delete_user(user_id: int):
     if user is None:
         return "", 404
 
-    response = {"userId": user.id_user, "username": user.username, "password": user.password}
+    response = {
+        "userId": user.id_user,
+        "username": user.username,
+        "authorized": user.authorized
+    }
     session.delete(user)
     session.commit()
     session.close()
