@@ -2,7 +2,7 @@
   <div id="app">
 
     <b-navbar class="shadow-sm bg-dark ">
-      <b-navbar-brand class="text-light">PokeVisor Authentication</b-navbar-brand>
+      <b-navbar-brand class="text-light">PokeVisor Authorization</b-navbar-brand>
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
