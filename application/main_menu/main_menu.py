@@ -1,12 +1,19 @@
 """ This script contains key validation and main menu ui classes. """
-
+import json
 import tkinter.ttk as ttk
+from enum import Enum
+from http.client import HTTPConnection
 from tkinter import Tk, messagebox, StringVar
 
 from poke_visor.gui.chip_classifier_generator_ui import main as chip_main
 from poke_visor.gui.pokevisor_image_ui import main as image_main
 from poke_visor.gui.pokevisor_video_ui import main as video_main
 from serial_key_generator.key_validator import KeyValidator, KeyStatus
+
+
+class AuthorizationType(Enum):
+    serial_key = "serialKey"
+    server = "server"
 
 
 class KeyValidationUi(Tk):
@@ -88,11 +95,153 @@ class MainMenuUi(Tk):
         MainMenuUi()
 
 
+class LoginUi(Tk):
+    """ This class represents key login window. """
+
+    def __init__(self):
+        """ Initializes LoginUi class. """
+
+        super().__init__(None)
+
+        self._username = StringVar()
+        self._password = StringVar()
+        """ Stores product key entered by user. """
+
+        self.geometry("300x200")
+        self.title("PokeVisor login")
+
+        ttk.Label(self, text="Enter user credentials").pack()
+        username_frame = ttk.LabelFrame(self, text="Username")
+        ttk.Entry(username_frame, width=40, textvariable=self._username).pack(padx=5, pady=5)
+        username_frame.pack(padx=5, pady=5)
+        password_frame = ttk.LabelFrame(self, text="Password")
+        ttk.Entry(password_frame, show="*", width=40, textvariable=self._password).pack(padx=5, pady=5)
+        password_frame.pack(padx=5, pady=5)
+
+        ttk.Button(self, text="Login", width=10, command=self._login).pack()
+        ttk.Button(self, text="Register", width=10, command=self._go_to_register).pack()
+
+    def _go_to_register(self) -> None:
+        """ Handles user entered key validation. """
+
+        self.destroy()
+        RegisterUi()
+
+    def _login(self) -> None:
+        """ Handles user entered key validation. """
+
+        error_msg = ""
+        if not self._username.get().strip():
+            error_msg += "Empty username\n"
+
+        if not self._password.get().strip():
+            error_msg += "Empty password\n"
+
+        if error_msg:
+            messagebox.showinfo("error", error_msg)
+            return
+
+        try:
+            conn = HTTPConnection("localhost:5000")
+            headers = {"Content-type": "application/json"}
+            conn.request("POST", url="/user/authorize", headers=headers, body=json.dumps({
+                "username": self._username.get(),
+                "password": self._password.get()
+            }))
+            response = conn.getresponse()
+            conn.close()
+        except:
+            messagebox.showinfo("error", "Could not connect to server")
+            return
+
+        if response.status == 200:
+            self.destroy()
+            MainMenuUi()
+        else:
+            messagebox.showinfo("error", "Login failed")
+
+
+class RegisterUi(Tk):
+    """ This class represents key login window. """
+
+    def __init__(self):
+        """ Initializes LoginUi class. """
+
+        super().__init__(None)
+
+        self._username = StringVar()
+        self._password = StringVar()
+        """ Stores product key entered by user. """
+
+        self.geometry("300x200")
+        self.title("PokeVisor registration")
+
+        ttk.Label(self, text="Enter user credentials").pack()
+        username_frame = ttk.LabelFrame(self, text="Username")
+        ttk.Entry(username_frame, width=40, textvariable=self._username).pack(padx=5, pady=5)
+        username_frame.pack(padx=5, pady=5)
+        password_frame = ttk.LabelFrame(self, text="Password")
+        ttk.Entry(password_frame, show="*", width=40, textvariable=self._password).pack(padx=5, pady=5)
+        password_frame.pack(padx=5, pady=5)
+
+        ttk.Button(self, text="Register", width=10, command=self._register_user).pack()
+        ttk.Button(self, text="Cancel", width=10, command=self._go_back).pack()
+
+    def _go_back(self) -> None:
+        """ Handles user entered key validation. """
+
+        self.destroy()
+        LoginUi()
+
+    def _register_user(self) -> None:
+        """ Handles user entered key validation. """
+
+        error_msg = ""
+        if not self._username.get().strip():
+            error_msg += "Empty username\n"
+
+        if not self._password.get().strip():
+            error_msg += "Empty password\n"
+
+        if error_msg:
+            messagebox.showinfo("error", error_msg)
+            return
+
+        try:
+            conn = HTTPConnection("localhost:5000")
+            headers = {"Content-type": "application/json"}
+            conn.request("POST", url="/user", headers=headers, body=json.dumps({
+                "username": self._username.get(),
+                "password": self._password.get()
+            }))
+            response = conn.getresponse()
+            conn.close()
+        except:
+            messagebox.showinfo("error", "Could not connect to server")
+            return
+
+        if response.status == 200:
+            messagebox.showinfo("success", "User created")
+            self._go_back()
+        elif response.status == 409:
+            messagebox.showinfo("error", "Username is already in use")
+        else:
+            messagebox.showinfo("error", "Server error")
+
+
 def _main() -> None:
     """ Main function """
 
-    key_activation = KeyValidationUi()
-    key_activation.mainloop()
+    with open("config.json", mode="r") as config_file:
+        config: dict = json.loads(config_file.read())
+
+    authorization_type = AuthorizationType(config["authorizationType"])
+    if authorization_type == AuthorizationType.server:
+        key_activation = LoginUi()
+        key_activation.mainloop()
+    elif authorization_type == AuthorizationType.serial_key:
+        key_activation = KeyValidationUi()
+        key_activation.mainloop()
 
 
 if __name__ == "__main__":

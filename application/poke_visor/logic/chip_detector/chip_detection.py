@@ -25,10 +25,12 @@ def _load_settings():
 
     if os.path.isfile("config.json"):
         with open("config.json", "r") as file:
-            settings = json.loads(file.read())["chip-detector"]
-        CHIP_MIN_DISTANCE = settings["chip-min-distance"]
-        CHIP_MIN_RADIUS = settings["chip-min-radius"]
-        CHIP_MAX_RADIUS = settings["chip-max-radius"]
+            config_json = json.loads(file.read())
+            if "chip-detector" in config_json:
+                settings = json.loads(file.read())["chip-detector"]
+                CHIP_MIN_DISTANCE = settings["chip-min-distance"]
+                CHIP_MIN_RADIUS = settings["chip-min-radius"]
+                CHIP_MAX_RADIUS = settings["chip-max-radius"]
 
 
 _load_settings()

@@ -45,9 +45,11 @@ def _load_settings():
 
     if os.path.isfile("config.json"):
         with open("config.json", "r") as file:
-            settings = json.loads(file.read())["card-detector"]
-        CARD_MAX_AREA = settings["card-max-area"]
-        CARD_MIN_AREA = settings["card-min-area"]
+            config_json = json.loads(file.read())
+            if "card-detector" in config_json:
+                settings = json.loads(file.read())["card-detector"]
+                CARD_MAX_AREA = settings["card-max-area"]
+                CARD_MIN_AREA = settings["card-min-area"]
 
 
 _load_settings()
