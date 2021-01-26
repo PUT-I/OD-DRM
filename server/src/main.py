@@ -31,12 +31,12 @@ def test():
 @cross_origin()
 def authorize():
     request_json = request.json
-    user_id = request_json["userId"]
+    username = request_json["username"]
     password = request_json["password"]
 
     session = Session()
     user: orm.User = session.query(orm.User) \
-        .filter(orm.User.id_user == user_id and orm.User.password == password) \
+        .filter(orm.User.username == username and orm.User.password == password) \
         .first()
 
     if user is None:
@@ -44,7 +44,7 @@ def authorize():
 
     session.close()
 
-    return '{"authorized": "true"}', 200
+    return json.dumps({"authorized": user.authorized}), 200
 
 
 @app.route('/user', methods=["GET"])
