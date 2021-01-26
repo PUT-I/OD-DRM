@@ -13,9 +13,8 @@ import orm_objects as orm
 from Log import Log
 
 # noinspection PyTypeChecker
-engine: Engine = create_engine("sqlite:///database.sqlite")
+engine: Engine = None
 Session = sessionmaker()
-Session.configure(bind=engine)
 
 app = Flask("PokeVisorAuthorization")
 
@@ -179,6 +178,7 @@ def delete_user(user_id: int):
 def _main():
     import argparse
     import time
+    global engine
 
     parser = argparse.ArgumentParser()
 
@@ -196,6 +196,8 @@ def _main():
         except OperationalError as error:
             if time.time() - time_start >= 10.0:
                 raise error
+    engine = create_engine(f"mysql://root:admin@{args.host}:{args.port}/pokevisor")
+    Session.configure(bind=engine)
     app.run("0.0.0.0", 5000)
 
 
