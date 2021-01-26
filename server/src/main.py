@@ -6,7 +6,7 @@ from flask_cors import cross_origin
 from sqlalchemy import create_engine
 # noinspection PyProtectedMember
 from sqlalchemy.engine import Engine
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import sessionmaker
 
 import orm_objects as orm
@@ -177,6 +177,25 @@ def delete_user(user_id: int):
 
 
 def _main():
+    import argparse
+    import time
+
+    parser = argparse.ArgumentParser()
+
+    # Required argument
+    parser.add_argument("-a", "--host", type=str, default="localhost", required=False, help="Database host")
+    parser.add_argument("-p", "--port", type=int, default=3306, required=False, help="Database port")
+    args = parser.parse_args()
+
+    time_start = time.time()
+    stop = False
+    while not stop:
+        try:
+            orm.init_db(args.host, args.port)
+            stop = True
+        except OperationalError as error:
+            if time.time() - time_start >= 10.0:
+                raise error
     app.run("0.0.0.0", 5000)
 
 

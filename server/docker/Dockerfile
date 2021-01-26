@@ -10,5 +10,5 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5001
 
-RUN "python" "./src/orm_objects.py"
-ENTRYPOINT ["python", "./src/main.py"]
+#RUN "python" "./src/orm_objects.py"
+ENTRYPOINT ["python", "./src/main.py", "--host", "pokevisor_db", "--port", "3306"]
