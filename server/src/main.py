@@ -100,9 +100,14 @@ def add_user():
     session = Session()
     try:
         request_json = request.json
+
+        authorized: bool = True
+        if "authorized" in request_json:
+            authorized = request_json["authorized"]
+
         user = orm.User(username=request_json["username"],
                         password=request_json["password"],
-                        authorized=request_json["authorized"])
+                        authorized=authorized)
         session.add(user)
         session.commit()
 

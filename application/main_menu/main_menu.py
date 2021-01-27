@@ -1,4 +1,6 @@
 """ This script contains key validation and main menu ui classes. """
+import base64
+import hashlib
 import json
 import tkinter.ttk as ttk
 from enum import Enum
@@ -210,15 +212,20 @@ class RegisterUi(Tk):
         try:
             conn = HTTPConnection("localhost:5000")
             headers = {"Content-type": "application/json"}
+            password_hash: bytes = hashlib.sha256(self._password.get().encode("ascii")).digest()
+
+            password: str = base64.b64encode(password_hash).decode(encoding="ascii")
+            # password = password[:-1]
+
             conn.request("POST", url="/user", headers=headers, body=json.dumps({
                 "username": self._username.get(),
-                "password": self._password.get()
+                "password": password
             }))
             response = conn.getresponse()
             conn.close()
         except:
             messagebox.showinfo("error", "Could not connect to server")
-            return
+            raise
 
         if response.status == 200:
             messagebox.showinfo("success", "User created")
