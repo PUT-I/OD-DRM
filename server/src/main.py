@@ -39,7 +39,7 @@ def authorize():
         .filter(orm.User.username == username and orm.User.password == password) \
         .first()
 
-    if user is None:
+    if user is None or user.authorized:
         return "", 401
 
     session.close()
